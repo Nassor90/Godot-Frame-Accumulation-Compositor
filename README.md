@@ -1,4 +1,4 @@
-# Godot-Frame-Accumulation-Compositor
+# Godot Frame Accumulation Compositor
 
 This CompositorEffect is a post transparent process effect that allows you to mix a copy of the current frame buffer into a persistent color buffer. This allows for the creation of frame accumulation-based fullscreen effects.
 
