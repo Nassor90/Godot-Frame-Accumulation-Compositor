@@ -2,9 +2,7 @@
 
 This CompositorEffect is a post transparent process effect that allows you to mix a copy of the current frame buffer into a persistent color buffer. This allows for the creation of frame accumulation-based fullscreen effects.
 
-
-https://github.com/user-attachments/assets/adb9deba-cba8-4e9f-a87e-bf0f4acd7dbd
-
+https://github.com/user-attachments/assets/09332969-f375-4f81-a11b-52807e3a8481
 
 # Usage
 
