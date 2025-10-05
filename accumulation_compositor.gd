@@ -4,7 +4,7 @@ class_name AccumulationEffect
 
 const SHADER_PATH: String = "res://effect/accumulation_effect.glsl"
 
-@export_range(0.01, 0.99, 0.01) var blur_strength: float = 0.75
+@export_range(0.0, 0.99, 0.01) var blur_strength: float = 0.75
 
 var rd: RenderingDevice
 var shader: RID
