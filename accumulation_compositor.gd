@@ -30,6 +30,11 @@ func _notification(what: int) -> void:
 			rd.free_rid(linear_sampler)
 			rd.free_rid(accumulated_buffer)
 
+func _set(property: StringName, value: Variant):
+	if property == &"enabled":
+		enabled = value
+		initialize_accumulation_buffer(stored_size)
+
 var linear_sampler: RID
 
 #region Code in this region runs on the rendering thread.
