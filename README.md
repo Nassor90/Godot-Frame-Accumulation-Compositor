@@ -20,6 +20,4 @@ Add the provided .gd and .glsl files into your project.
 
 # Known Issues
 
-When the effect gets added to the compositor it will flash black for a frame and darken the image for a short while. This'll be fixed very soon.
-
-If you use the enabled variable to enable and disable the compositor it'll accumulate a frame from before you disabled it which looks bad. I'll look into this ASAP.
+When the effect gets added to the compositor it will flash black for a frame and darken the image for a couple frames. This is quite apparent in editor but in game it shouldn't be too obvious and can be worked around by setting the effect when loading into a scene and having the blur strength at 0.
