@@ -2,6 +2,10 @@
 
 This CompositorEffect is a post transparent process effect that allows you to mix a copy of the current frame buffer into a persistent color buffer. This allows for the creation of frame accumulation-based fullscreen effects.
 
+
+https://github.com/user-attachments/assets/adb9deba-cba8-4e9f-a87e-bf0f4acd7dbd
+
+
 # Usage
 
 In the accumulation_compositor.gd file set the SHADER_PATH const to the path of the provided glsl file. After that go to the Compositor on either your WorldEnvironment or Camera3D and add a new effect to the CompositorEffects array.
