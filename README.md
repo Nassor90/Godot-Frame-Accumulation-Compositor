@@ -12,6 +12,8 @@ In the effect itself there is a blur_strength variable that will let you control
 
 If the AccumulationEffect does not appear you may have to restart your engine. 
 
+To disable it I recommend setting the blur_strength to 0 rather than disabling the effect itself to prevent strange accumulation issues when restarting it.
+
 # Installation
 
 Add the provided .gd and .glsl files into your project.
