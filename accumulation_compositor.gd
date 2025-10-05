@@ -60,11 +60,9 @@ func _initialize_compute() -> void:
 func initialize_accumulation_buffer(size: Vector2i) -> void:
 	if !rd: return
 	
-	if accumulated_buffer.get_id() != 0:
+	if accumulated_buffer.is_valid():
 		rd.free_rid(accumulated_buffer)
 	
-	if accumulated_buffer.get_id() != 0:
-		rd.free_rid(accumulated_buffer)
 	
 	var buffer_texture := RDTextureFormat.new()
 	buffer_texture.width = size.x
@@ -136,9 +134,7 @@ func _render_callback(p_effect_callback_type: EffectCallbackType, p_render_data:
 				u_frame_texture.add_id(frame_texture)
 				
 				if !buffer_set:
-					
 					initialize_accumulation_buffer(size)
-					
 					buffer_set = true
 				
 				var uniform_set: RID
