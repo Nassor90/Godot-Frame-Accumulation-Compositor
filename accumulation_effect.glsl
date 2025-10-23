@@ -14,7 +14,7 @@ layout(set = 0, binding = 2) uniform sampler2D frame_texture;
 layout(push_constant, std430) uniform Params {
 	vec2 raster_size;
 	float blur_strength;
-	float reserved;
+	float distance_factor;
 } params;
 
 // The code we want to execute in each invocation
@@ -32,7 +32,9 @@ void main() {
 
 	vec4 acc_color = imageLoad(accumulation_buffer, uv);
 
-	vec4 acc_blend = mix(frame_color, acc_color, params.blur_strength);
+	float delta = clamp(pow(params.blur_strength, params.distance_factor), 0.0, 1.0);
+
+	vec4 acc_blend = mix(frame_color, acc_color, delta);
 
 	imageStore(accumulation_buffer, uv, acc_blend);
 

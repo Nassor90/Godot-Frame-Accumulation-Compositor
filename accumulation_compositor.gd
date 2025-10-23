@@ -12,6 +12,7 @@ var pipeline: RID
 
 var stored_size: Vector2i
 
+var clear_accumulation_buffer: bool = false
 var buffer_set: bool = false
 var accumulated_buffer: RID
 
@@ -30,12 +31,12 @@ func _notification(what: int) -> void:
 			rd.free_rid(linear_sampler)
 			rd.free_rid(accumulated_buffer)
 
+var linear_sampler: RID
+
 func _set(property: StringName, value: Variant):
 	if property == &"enabled":
 		enabled = value
 		initialize_accumulation_buffer(stored_size)
-
-var linear_sampler: RID
 
 #region Code in this region runs on the rendering thread.
 # Compile our shader at initialization.
@@ -52,7 +53,8 @@ func _initialize_compute() -> void:
 	# Compile our shader.
 	var shader_file := load(SHADER_PATH)
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
-
+	
+	
 	shader = rd.shader_create_from_spirv(shader_spirv)
 	if shader.is_valid():
 		pipeline = rd.compute_pipeline_create(shader)
@@ -63,7 +65,6 @@ func initialize_accumulation_buffer(size: Vector2i) -> void:
 	if accumulated_buffer.is_valid():
 		rd.free_rid(accumulated_buffer)
 	
-	
 	var buffer_texture := RDTextureFormat.new()
 	buffer_texture.width = size.x
 	buffer_texture.height = size.y
@@ -72,9 +73,8 @@ func initialize_accumulation_buffer(size: Vector2i) -> void:
 	
 	var tex_view := RDTextureView.new()
 	
-	var acc_image := Image.create(size.x, size.y, false, Image.FORMAT_RGBAH)
+	var acc_image := Image.create_empty(size.x, size.y, false, Image.FORMAT_RGBAH)
 	accumulated_buffer = rd.texture_create(buffer_texture, tex_view, [acc_image.get_data()])
-
 
 # Called by the rendering thread every frame.
 func _render_callback(p_effect_callback_type: EffectCallbackType, p_render_data: RenderData) -> void:
@@ -103,18 +103,23 @@ func _render_callback(p_effect_callback_type: EffectCallbackType, p_render_data:
 			var y_groups := (size.y - 1) / 8 + 1
 			var z_groups := 1
 			
+			var delta_time := 1.0/Engine.get_frames_per_second()
+			var blur_delta: float = 1.0 / ((1.0 / 60.0) / delta_time)
+			
 			# Create push constant.
 			# Must be aligned to 16 bytes and be in the same order as defined in the shader.
 			var push_constant := PackedFloat32Array([
 				size.x,
 				size.y,
 				blur_strength,
-				0.0,
+				blur_delta,
 			])
 			
 			# Loop through views just in case we're doing stereo rendering. No extra cost if this is mono.
 			var view_count: int = render_scene_buffers.get_view_count()
 			for view in view_count:
+				
+				var uniform_set: RID
 				
 				# Get the RID for our color image, we will be reading from and writing to it.
 				var color_buffer: RID = render_scene_buffers.get_color_layer(view)
@@ -136,8 +141,6 @@ func _render_callback(p_effect_callback_type: EffectCallbackType, p_render_data:
 				if !buffer_set:
 					initialize_accumulation_buffer(size)
 					buffer_set = true
-				
-				var uniform_set: RID
 				
 				var u_acc_buffer := RDUniform.new()
 				u_acc_buffer.uniform_type = RenderingDevice.UNIFORM_TYPE_IMAGE
